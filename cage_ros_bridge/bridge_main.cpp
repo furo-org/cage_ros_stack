@@ -1,3 +1,10 @@
+// Copyright 2018-2020
+//       Yoshitaka Hara <hara@furo.org>
+//       Tomoaki Yoshida p<yoshida@furo.org>
+/*
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+*/
 
 #include "cageclient.hh"
 #include <boost/function.hpp>

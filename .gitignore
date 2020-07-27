@@ -1,6 +1,17 @@
 # Prerequisites
 *.d
 
+# Backup files
+*~
+*.swp
+*.autosave
+*.backup
+
+# Build directories
+build/
+bin/
+lib/
+
 # Compiled Object files
 *.slo
 *.lo
@@ -30,3 +41,13 @@
 *.exe
 *.out
 *.app
+
+# Python Bytecode files
+*.pyc
+
+# Visual Studio Code files
+.vscode/
+
+# CMake files
+compile_commands.json
+CMakeLists.txt.user

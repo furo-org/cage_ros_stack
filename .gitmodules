@@ -1,0 +1,3 @@
+[submodule "CageClient"]
+	path = cage_ros_bridge/CageClient
+	url = https://github.com/furo-org/CageClient

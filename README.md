@@ -98,7 +98,7 @@ catkin build
 `ip:=`のオプションではシミュレータを起動しているPCのIPアドレス（今回は`192.168.1.110`とします）を指定します。
 
 ```sh
-roslaunch vtc_ue_bringup bringup.launch ip:=192.168.1.110
+roslaunch vtc_bringup bringup.launch ip:=192.168.1.110
 ```
 
 furo-org/VTCのレーザスキャナは、台車にコマンドを送ってきたホストにスキャンデータを送信するようになっています。

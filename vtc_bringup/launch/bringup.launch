@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ip" default="127.0.0.1" />
+  <arg name="urg_link" default="base_link" />
+  <arg name="rvizconfig" value="$(find vtc_bringup)/config/vtc.rviz" />
+  <node name="cage_ros_bridge" pkg="cage_ros_bridge" type="cage_ros_bridge"
+    args="-d $(arg ip)" required="true" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)"/>
+  <node name="rostopic" pkg="rostopic" type="rostopic" args="pub -1 /cmd_vel geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, 0.0, 0.0]'"/>
+  <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
+    <arg name="device_ip" value="$(arg ip)" />
+    <arg name="frame_id" value="$(arg urg_link)" />
+  </include>
+</launch>

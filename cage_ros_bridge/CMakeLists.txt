@@ -8,7 +8,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()
-message("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,6 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Boost COMPONENTS program_options timer REQUIRED)
 
+add_subdirectory(CageClient)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -132,9 +132,6 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  ${PROJECT_SOURCE_DIR}/../../
-  ${PROJECT_SOURCE_DIR}/../../json/include
-  #$ENV{WORKSPACE}/toki/furom/include
 )
 
 ## Declare a C++ library
@@ -173,7 +170,7 @@ add_executable(cage_ros_bridge
 target_link_libraries(cage_ros_bridge
   ${catkin_LIBRARIES}
   Boost::program_options
-  zmq
+  cageClientIF
   rt
 )
 

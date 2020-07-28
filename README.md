@@ -11,6 +11,7 @@ YouTube: https://youtu.be/R8G5LW7Up14
 * [初期設定](#初期設定)
 * [使い方](#使い方)
 * [ライセンス](#ライセンス)
+* [コントリビュータ](#コントリビュータ)
 
 ## 初期設定
 
@@ -108,3 +109,10 @@ furo-org/VTCのレーザスキャナは、台車にコマンドを送ってき�
 ## ライセンス
 
 MITライセンスに基づき公開しています。詳細は[LICENSE](./LICENSE)を参照してください。
+
+## コントリビュータ
+
+[fuRo](https://github.com/furo-org)外のコントリビュータ
+
+* [`vtc_bringup`](./vtc_bringup)
+    * [Daisuke Sato](https://github.com/Tiryoh)

@@ -37,8 +37,8 @@ Windows 10 Pro 64bitのバージョン1909とバージョン2004で以下のUnre
 
 Ubuntu 18.04をインストールしたPCにROS Melodicをインストールします。  
 ROSのインストール方法は[ROS Wiki](http://wiki.ros.org/melodic/Installation/Ubuntu)に書かれています。
-ROSのセットアップは[Tiryoh/ros_setup_scripts](https://github.com/Tiryoh/ros_setup_scripts_ubuntu)を使うと楽です。
-[Tiryoh/ros_setup_scripts](https://github.com/Tiryoh/ros_setup_scripts_ubuntu)を使ってインストールする場合は以下のコマンドを実行します。
+ROSのセットアップは[Tiryoh/ros_setup_scripts_ubuntu](https://github.com/Tiryoh/ros_setup_scripts_ubuntu)を使うと楽です。
+[Tiryoh/ros_setup_scripts_ubuntu](https://github.com/Tiryoh/ros_setup_scripts_ubuntu)を使ってインストールする場合は以下のコマンドを実行します。
 
 ```sh
 bash -c "$(curl -SsfL u.ty0.jp/ros-melodic-desktop)"

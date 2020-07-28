@@ -2,7 +2,7 @@
 <package format="2">
   <name>vtc_bringup</name>
   <version>1.0.0</version>
-  <description>The vtc_ue_bringup package</description>
+  <description>The bringup package for VTC + cage_ros_bridge</description>
 
   <maintainer email="yoshida@furo.org">Tomoaki Yoshida</maintainer>
   <author email="tiryoh@gmail.com">Daisuke Sato</author>

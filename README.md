@@ -80,11 +80,12 @@ cd ~/catkin_ws/src
 rosdep install -r -y -i --from-paths cage_ros_stack
 ```
 
-ビルドします。
+ROSパッケージをビルドし、ワークスペースの設定を読み込みます。
 
 ```sh
 cd ~/catkin_ws
 catkin build
+source devel/setup.bash
 ```
 
 ## 使い方

@@ -31,7 +31,12 @@ Windows 10 Pro 64bitのバージョン1909とバージョン2004で以下のUnre
 
 ### 2. cage_ros_stackのセットアップ
 
-[furo-org/CageClient](https://github.com/furo-org/CageClient)をROSのインターフェースで使用するためのROSパッケージ、[furo-org/cage_ros_stack](https://github.com/furo-org/cage_ros_stack)をセットアップします。ROS MelodicをUbuntu 18.04.4のPCにインストールして動作確認をしました。
+[furo-org/CageClient](https://github.com/furo-org/CageClient)をROSのインターフェースで使用するためのROSパッケージ、[furo-org/cage_ros_stack](https://github.com/furo-org/cage_ros_stack)をセットアップします。以下の環境で動作確認しました。
+
+* ROS Melodic + Ubuntu 18.04.4
+* ROS Noetic + Ubuntu 20.04
+
+このドキュメントでは以下 Ubuntu 18.04.4 と ROS Melodic の組み合わせを想定して説明します。
 
 #### 2.1. ROSのセットアップ
 

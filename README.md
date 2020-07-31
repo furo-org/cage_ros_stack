@@ -26,6 +26,7 @@ Windows 10 Pro 64bitのバージョン1909とバージョン2004で以下のUnre
 * VTC2018
 * VTC2019
 * VTC 2020/5/28版
+* [VTC TC2020ブランチ 2020/7/10のコミット](https://github.com/furo-org/VTC/commit/769fe5729db5b92037c283e7d45adf50374b6288)
 
 ファイアウォールの設定をしてシミュレータの外部との通信を許可しておきます。
 
@@ -111,6 +112,16 @@ roslaunch vtc_bringup bringup.launch ip:=192.168.1.110
 furo-org/VTCのレーザスキャナは、台車にコマンドを送ってきたホストにスキャンデータを送信するようになっています。
 そのため`bringup.launch`の起動時にシミュレータ宛に台車停止コマンドを`rostopic`で送信しています。
 これによりROS上でレーザスキャナのスキャンデータを扱えるようになります。
+
+### 動作確認
+
+/cmd_vel に走行コマンドを送るとロボットを動かすことができます。例えばteleop_twist_keyboardを使うとひとまずキーボードで操作できます。
+
+``` sh
+sudo apt install ros-melodic-teleop-keyboard-twist-keyboard   # ROS melodicの場合
+#sudo apt install ros-noetic-teleop-keyboard-twist-keyboard   # ROS noeticの場合
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+```
 
 ## ライセンス
 

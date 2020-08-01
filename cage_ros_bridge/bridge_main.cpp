@@ -68,7 +68,7 @@ public:
 
 public:
   SimpleOdometry(const CageAPI::vehicleInfo &info) : Info(info), LastClock(std::numeric_limits<double>::max()){};
-  bool Accumulate(const CageAPI::vehicleStatus &st);
+  int Accumulate(const CageAPI::vehicleStatus &st);
   void Reset(double x=0, double y=0, double th=0){X=x;Y=y;Th=th;}
 };
 
@@ -162,21 +162,27 @@ void RosBridge::PublishTFTransform(ros::Time stamp, std::string frame_id, std::s
 
 // ---------
 
-bool SimpleOdometry::Accumulate(const CageAPI::vehicleStatus &st){
+/*
+   st を積算して位置姿勢を更新
+   st.simClockが前回のsimClockより小さければ積算結果を0クリアする (return -1)
+   st.simClockが前回から1ms未満しか変化していなければ無視する (return 0)
+   そうでなければ位置姿勢を更新する (return 1)
+*/
+int SimpleOdometry::Accumulate(const CageAPI::vehicleStatus &st){
   if(LastClock>st.simClock){
     // reset odometry
     LastClock=st.simClock;
     X=0;
     Y=0;
     Th=0;
-    return false;
+    return -1;
   }
   // simple odometry
   double dt = st.simClock - LastClock;
   double ts;
 
   if (dt < 0.001) //1ms
-    return false;
+    return 0;
   LastClock = st.simClock;
 
   double vr = -st.rrpm * Info.WheelPerimeterR / Info.ReductionRatio / 60.;
@@ -191,7 +197,7 @@ bool SimpleOdometry::Accumulate(const CageAPI::vehicleStatus &st){
   Th += az * dt;
   Vx=vx;
   Az=az;
-  return true;
+  return 1;
 }
 
 int main(int argc, char **argv) try
@@ -280,9 +286,11 @@ int main(int argc, char **argv) try
       // to ROS
       auto stamp=ros::Time::now();
 
-      if(!odo.Accumulate(st)){
-        // world was restarted
-        Cage.setVW(0,0);
+      auto ret=odo.Accumulate(st);
+      if (ret<=0)
+      {
+        if (ret < 0) // world was restarted
+          Cage.setVW(0, 0);
         continue;
       }
 

@@ -118,8 +118,8 @@ furo-org/VTCのレーザスキャナは、台車にコマンドを送ってき�
 /cmd_vel に走行コマンドを送るとロボットを動かすことができます。例えばteleop_twist_keyboardを使うとひとまずキーボードで操作できます。
 
 ``` sh
-sudo apt install ros-melodic-teleop-keyboard-twist-keyboard   # ROS melodicの場合
-#sudo apt install ros-noetic-teleop-keyboard-twist-keyboard   # ROS noeticの場合
+sudo apt install ros-melodic-teleop-twist-keyboard   # ROS melodicの場合
+#sudo apt install ros-noetic-teleop-twist-keyboard   # ROS noeticの場合
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 ```
 

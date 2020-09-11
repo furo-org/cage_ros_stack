@@ -11,6 +11,7 @@ http://opensource.org/licenses/mit-license.php
 #include <boost/program_options.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <chrono>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <geometry_msgs/TransformStamped.h>
@@ -31,8 +32,11 @@ bool parseOption(bo::variables_map &vm, std::string option, Type& store){
   return false;
 }
 
-// Publisher
-class RosBridge{
+using Arr4d = std::array<double, 4>;
+using Arr3d=std::array<double,3>;
+
+    // Publisher
+    class RosBridge {
   ros::NodeHandle Node;
   tf2_ros::TransformBroadcaster TFb;
   struct PublisherDesc
@@ -51,7 +55,8 @@ public:
   template <typename msgType>
   int NewPublisher(std::string topic, uint32_t qlen, std::string frame_id, std::string child_frame_id);
 
-  void PublishOdom(int navid, ros::Time stamp, double x, double y, double z, tf2::Quaternion q, double vx, double az);
+  void PublishOdom(int navid, ros::Time stamp, double x, double y, double z,
+                   tf2::Quaternion q, double vx, double az);
   // orientation and tfRot are quaternions and they must be in order {w, x, y, z}
   void PublishIMU(ros::Time stamp, Arr4d orientation, Arr3d angvel, Arr3d accel, Arr3d tfTrans, Arr4d tfRot);
   void PublishNavSat(int pubid, ros::Time stamp, double lat, double lon, Arr3d pos, tf2::Quaternion q, bool publishTF,
@@ -60,7 +65,7 @@ public:
 
   private:
     nav_msgs::Odometry BuildNavMsg(double x, double y, double z, tf2::Quaternion q, double vx, double az);
-  };
+};
 
 // Odometry calculater
 class SimpleOdometry{
@@ -123,33 +128,38 @@ void RosBridge::PublishOdom(int pubid, ros::Time stamp, double x, double y, doub
   odo.child_frame_id = np.child_frame_id;
 
   np.pub.publish(odo);
-  PublishTFTransform(stamp,np.frame_id, np.child_frame_id, x,y,z,q);
+  PublishTFTransform(stamp,np.frame_id, np.child_frame_id, {x,y,z} ,q);
 }
 
-void RosBridge::PublishIMU(ros::Time stamp, double ow, double ox, double oy, double oz, double rx, double ry, double rz, double ax, double ay, double az){
+void RosBridge::PublishIMU(ros::Time stamp, Arr4d orientation, Arr3d angvel,
+                           Arr3d accel, Arr3d tfTransform, Arr4d tfRot) {
   const PublisherDesc &np = Publishers[ImuId];
 
   sensor_msgs::Imu imu;
   imu.header.frame_id = np.frame_id;
   imu.header.stamp=stamp;
-  imu.orientation.w = ow;
-  imu.orientation.x = ox;
-  imu.orientation.y = oy;
-  imu.orientation.z = oz;
+  imu.orientation.w = orientation[0];
+  imu.orientation.x = orientation[1];
+  imu.orientation.y = orientation[2];
+  imu.orientation.z = orientation[3];
   imu.orientation_covariance = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  imu.angular_velocity.x = rx;
-  imu.angular_velocity.y = ry;
-  imu.angular_velocity.z = rz;
+  imu.angular_velocity.x = angvel[0];
+  imu.angular_velocity.y = angvel[1];
+  imu.angular_velocity.z = angvel[2];
   imu.angular_velocity_covariance = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-  imu.linear_acceleration.x = ax;
-  imu.linear_acceleration.y = ay;
-  imu.linear_acceleration.z = az;
+  imu.linear_acceleration.x = accel[0];
+  imu.linear_acceleration.y = accel[1];
+  imu.linear_acceleration.z = accel[2];
   imu.linear_acceleration_covariance = {0, 0, 0, 0, 0, 0, 0, 0, 0};
   np.pub.publish(imu);
 
-  tf2::Quaternion q;
-  q.setRPY(0,0,0);
-  PublishTFTransform(stamp,np.frame_id, np.child_frame_id, 0,0,0,q);
+  tf2::Quaternion q{
+      tfRot[1], // x
+      tfRot[2], // y
+      tfRot[3], // z
+      tfRot[0]  // w
+  };
+  PublishTFTransform(stamp, np.frame_id, np.child_frame_id, tfTransform, q);
 }
 
 void RosBridge::PublishNavSat(int pubid, ros::Time stamp, double lat, double lon, Arr3d pos, tf2::Quaternion q, bool publishTF, unsigned int service, int status)
@@ -160,7 +170,8 @@ void RosBridge::PublishNavSat(int pubid, ros::Time stamp, double lat, double lon
 
   // publish
   sensor_msgs::NavSatFix nav;
-  nav.header.frame_id = np.frame_id;
+  auto frameid = np.child_frame_id;
+  nav.header.frame_id = np.child_frame_id;
   nav.header.stamp = stamp;
   nav.status.service = service;
   nav.status.status=status;
@@ -181,9 +192,9 @@ void RosBridge::PublishTFTransform(ros::Time stamp, std::string frame_id, std::s
   tf_dev.header.stamp = stamp;
   tf_dev.header.frame_id = frame_id;
   tf_dev.child_frame_id = child_frame_id;
-  tf_dev.transform.translation.x = x;
-  tf_dev.transform.translation.y = y;
-  tf_dev.transform.translation.z = z;
+  tf_dev.transform.translation.x = translation[0];
+  tf_dev.transform.translation.y = translation[1];
+  tf_dev.transform.translation.z = translation[2];
   tf_dev.transform.rotation = tf2::toMsg(q);
   TFb.sendTransform(tf_dev);
 }
@@ -260,11 +271,11 @@ public:
 
     pubOdom = rosIF.NewPublisher<nav_msgs::Odometry>("odom", 100, "odom", "base_link");
     pubOdom_gt = rosIF.NewPublisher<nav_msgs::Odometry>("odom_gt", 100, "odom", "base_link_gt");
-    pubLatLon = rosIF.NewPublisher<sensor_msgs::NavSatFix>("gps/fix", 100, "World", "map");
-
+    pubLatLon = rosIF.NewPublisher<sensor_msgs::NavSatFix>("gps/fix", 100, "base_link", "latlon");
     boost::function<void(const geometry_msgs::Twist &r_msg)>
         fromRos =
             [this](const auto &msg) {
+              if(!Cage.isValid())return;
               std::cout << "setVW:" << msg.linear.x << "," << msg.angular.z << std::endl;
               Cage.setVW(msg.linear.x, msg.angular.z);
             };
@@ -349,6 +360,7 @@ public:
         return;
       }
       ++Seq;
+      //std::cout<<"st: "<<st.toString();
 
       auto stamp = ros::Time::now();
 
@@ -386,7 +398,7 @@ public:
 
     // latitude and longitude as gnss fix
     tf2::Quaternion qu(0, 0, 0, 1);
-    rosIF.PublishNavSat(pubLatLon, stamp, st.latitude, st.longitude, {Odo->X, Odo->Y, 0}, qu, publishMapTF);
+    rosIF.PublishNavSat(pubLatLon, stamp, st.latitude, st.longitude, {0, 0, 0}, qu, publishMapTF);
 
     // Scanner position
     //std::cout << qlidar.w() << ", " << qlidar.x() << ", " << qlidar.y() << ", " << qlidar.z() << ", " <<std::endl;
@@ -394,7 +406,7 @@ public:
 
     // world - map transform
     if(publishMapTF)
-      rosIF.PublishTFTransform(stamp, "World", "odom", {0,0,0}, WorldRotation);
+      rosIF.PublishTFTransform(stamp, "map", "odom", {0,0,0}, WorldRotation);
   }
 };
 

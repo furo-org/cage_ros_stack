@@ -27,6 +27,7 @@ Windows 10 Pro 64bitのバージョン1909とバージョン2004で以下のUnre
 * VTC2019
 * VTC 2020/5/28版
 * [VTC TC2020ブランチ 2020/7/10のコミット](https://github.com/furo-org/VTC/commit/769fe5729db5b92037c283e7d45adf50374b6288)
+* [VTC TC2020ブランチ 2020/9/10のコミット](https://github.com/furo-org/VTC/commit/9f8317a99f6f0b5391dcfeede7484e35a8151955)
 
 ファイアウォールの設定をしてシミュレータの外部との通信を許可しておきます。
 

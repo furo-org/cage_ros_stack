@@ -17,8 +17,8 @@ ROS とシミュレータを接続する通信プログラムです。
 ### 配信するTF
 
 + odom → base_link
-+ base_link → IMU
-+ base_link → lidar
++ base_link → imu_link
++ base_link → lidar3d_link
 + base_link → latlon
 + odom → base_link_gt
 + map → odom

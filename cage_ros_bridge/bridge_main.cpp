@@ -256,7 +256,7 @@ class CageRosBridgeMain{
   CageAPI::Transform LidarTransform;
   CageAPI::Transform IMUTransform;
 
-  int MapPublishingRatio=10;
+  //int MapPublishingRatio=10;
   unsigned long long Seq=0;
 
 public:
@@ -318,16 +318,17 @@ public:
       };
       IMUTransform = Cage.VehicleInfo.Transforms["IMU"];
 
-      auto geoRot = tf2::Quaternion(
-          Cage.WorldInfo.ReferenceRotation[1],
-          Cage.WorldInfo.ReferenceRotation[2],
-          Cage.WorldInfo.ReferenceRotation[3],
-          Cage.WorldInfo.ReferenceRotation[0]);
-      tf2::Quaternion geo2world;
-      geo2world.setRPY(0,0,M_PI/2.);
-      WorldRotation = tf2::Quaternion(st.ox, st.oy, st.oz, st.ow)*geoRot*geo2world;
+      WorldRotation = tf2::Quaternion(0,0,0,1);
       if (Cage.WorldInfo.valid)
       {
+        auto geoRot = tf2::Quaternion(
+            Cage.WorldInfo.ReferenceRotation[1],
+            Cage.WorldInfo.ReferenceRotation[2],
+            Cage.WorldInfo.ReferenceRotation[3],
+            Cage.WorldInfo.ReferenceRotation[0]);
+        tf2::Quaternion geo2world;
+        geo2world.setRPY(0, 0, M_PI / 2.);
+        WorldRotation = tf2::Quaternion(st.ox, st.oy, st.oz, st.ow) * geoRot * geo2world;
         std::cout << "World information\n lat0, lon0, x, y, z, q.w, q.x, q.y, q.z\n"
                   << Cage.WorldInfo.Latitude0 << " " << Cage.WorldInfo.Longitude0 << " "
                   << Cage.WorldInfo.ReferenceLocation[0] << " "
@@ -394,7 +395,8 @@ public:
     // Orientation: Ground Truth,  Angulrar velocity, Linear Acceleration: values from physics engine
     rosIF.PublishIMU(stamp, {st.ow, st.ox, st.oy, st.oz}, {st.rx, st.ry, st.rz}, {st.ax, st.ay, st.az}, IMUTransform.trans, IMUTransform.rot);
 
-    bool publishMapTF = (Seq % MapPublishingRatio ==0);
+    // !! disable this feature for now
+    bool publishMapTF =false; // (Seq % MapPublishingRatio ==0);
 
     // latitude and longitude as gnss fix
     tf2::Quaternion qu(0, 0, 0, 1);
